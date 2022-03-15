@@ -1,6 +1,6 @@
 const mysql = require("mysql");
 const db = mysql.createConnection({
-    host: "dns.sttslife.co",
+    host: "localhost",
     user: "komadmin",
     password: "P@ssw0rd",
     database: "saverair_db",
