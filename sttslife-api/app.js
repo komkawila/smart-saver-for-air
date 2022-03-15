@@ -47,7 +47,6 @@ app.use('/airconfig', airconfigRoute);
 // Devices Config
 const devicesRoute = require('./routes/devices/devices');
 app.use('/devices', devicesRoute);
-app.use('/devices2', devicesRoute);
 
 app.listen(port, () =>
     console.log(`sttslife-api app listening on port ${port}!`)
