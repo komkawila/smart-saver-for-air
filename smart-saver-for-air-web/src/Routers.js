@@ -56,10 +56,6 @@ const Routers = () => {
         layout={MainLayout}
         component={Airbrand}
       />
-
-
-
-
       <AppRoute
         path="/"
         exact={true}
