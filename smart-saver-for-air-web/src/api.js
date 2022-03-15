@@ -1,0 +1,1 @@
+export const api = "https://sttslife-api.sttslife.co/";
