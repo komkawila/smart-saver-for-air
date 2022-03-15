@@ -1,8 +1,8 @@
 const mysql = require("mysql");
 const db = mysql.createPool({
     host: "localhost",
-    user: "admin",
-    password: "P@ssw0rd",
+    user: "root",
+    password: "q4%T5cr3",
     database: "saverair_db"
 });
 
