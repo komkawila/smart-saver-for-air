@@ -467,7 +467,7 @@ void fetchAPI() {
 void setup() {
 //  pinMode(LED_BUILTIN, OUTPUT);
 //  digitalWrite(LED_BUILTIN, LOW);
-  Serial.begin(57600);
+  Serial.begin(115200);
   String macaddress = WiFi.macAddress();
   macaddress = macaddress.substring(0, macaddress.indexOf(":") + 6);
   clientName += "-" + macaddress;
