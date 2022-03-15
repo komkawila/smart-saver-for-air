@@ -3,7 +3,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 
 import LoginLayout from "./components/layouts/LoginLayout";
 import MainLayout from "./components/layouts/MainLayout";
-import Dartboard from "./pages/DartBoard/Dartboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import Login from "./pages/Login/Login";
 import Createuser from "./pages/User/userCreate";
 import Edituser from "./pages/User/userEdit";
@@ -36,7 +36,7 @@ const Routers = () => {
         // path="/dashboard/:id"
         exact={true}
         layout={MainLayout}
-        component={Dartboard}
+        component={Dashboard}
       />
       <AppRoute
         path="/airtype"

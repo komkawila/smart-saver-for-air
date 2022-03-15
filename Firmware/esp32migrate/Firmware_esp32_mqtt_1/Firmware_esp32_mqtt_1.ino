@@ -31,7 +31,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print(mess);
     Serial.print("    values:");
     Serial.println(values);
-    if (mess.indexOf("AT+TOGGLE") != -1) {
+    if (mess.indexOf("AT+TOGGLE") != -1) { // TOGGLE
       user_enable = values;
       if (user_enable == 0) {
         relay.off(); // On Relay
@@ -44,9 +44,18 @@ void callback(char* topic, byte* payload, unsigned int length) {
         fetchAPI();
         times = TimeNo1_Setting;
       }
-
+    } else if (mess.indexOf("AT+LOGO") != -1) { // LOGO
+      ledlogo = values;
+      ledlogo == 0 ? logo.off() : logo.on();
+      //      user_enable = values;
+    } else if (mess.indexOf("AT+SLEEP") != -1) { // SLEEP MODE
+      //      user_enable = values;
+    } else if (mess.indexOf("AT+NIGHT") != -1) { // NIGHT  MODE
+      //      user_enable = values;
     } else if (mess.indexOf("AT+PULSE") != -1) {
       Pulse_Setting = values;
+    } else if (mess.indexOf("AT+SET") != -1) {
+      fetchAPI();
     } else if (mess.indexOf("AT+MODE") != -1) {
       index2 = mess.indexOf("|");
       Serial.print("index2 = ");
@@ -116,7 +125,6 @@ void reconnect() {
     }
   }
 }
-
 
 float tempArray[maxcalTemp];
 float avgTempArray[maxAVGTemp];
@@ -315,7 +323,7 @@ int mode_id = 0;
 bool enable = true;
 void publishMQTT() {
   Serial.print("Send....");
-//  digitalWrite(LED_BUILTIN, HIGH);
+  //  digitalWrite(LED_BUILTIN, HIGH);
   if (user_enable == 0) {
     ledgreen = false;
     ledyellow = false;
@@ -351,7 +359,7 @@ void publishMQTT() {
   json += "}";
   client.publish(topic.c_str(), json.c_str());
   Serial.println(" Ok");
-//  digitalWrite(LED_BUILTIN, LOW);
+  //  digitalWrite(LED_BUILTIN, LOW);
 }
 
 void printData() {
@@ -417,6 +425,8 @@ void fetchAPI() {
     user_modes = doc["user_modes"];
     user_enable = doc["user_enable"];
     Pulse_Setting = doc["user_pulseset"];
+    ledlogo = doc["logo"];
+    ledlogo == 0 ? logo.on() : logo.off();
     js = getHttp("http://dns.sttslife.co:3123/devices/config/" +  String(user_modes));
     json = js.substring(js.indexOf("[") + 1, js.indexOf("]"));
 
@@ -464,9 +474,10 @@ void fetchAPI() {
     Serial.println(config_pulsecount);
   }
 }
+
 void setup() {
-//  pinMode(LED_BUILTIN, OUTPUT);
-//  digitalWrite(LED_BUILTIN, LOW);
+  //  pinMode(LED_BUILTIN, OUTPUT);
+  //  digitalWrite(LED_BUILTIN, LOW);
   Serial.begin(115200);
   String macaddress = WiFi.macAddress();
   macaddress = macaddress.substring(0, macaddress.indexOf(":") + 6);
@@ -500,7 +511,7 @@ void setup() {
   relay.begin(); // Init Relay
   green.begin(); // Init LED Green
   yellow.begin(); // Init LED Yellow
-
+  logo.begin(); // Init LED Logo
   buzzer.on(); // On Buzzer
   temperatureTimer.setIntervals(2000);
   ledgreenTimer.setIntervals(1000);
@@ -512,7 +523,6 @@ void setup() {
   buzzer.off(); // Off Buzzer
   yellow.off(); // On LED Yellow
   fetchAPI();
-
 }
 String AT_COMMAND = "";
 
@@ -543,6 +553,7 @@ void loop(void) {
     }
   }
   //  Pulse_Setting = map(analogRead(VOLUME_PIN), 0, 1023, 0, PulseMax_Setting);
+
   if (user_enable == 1) {
     temperatureTimer.run(readTemps);
     ledgreenTimer.run(ledStatus);

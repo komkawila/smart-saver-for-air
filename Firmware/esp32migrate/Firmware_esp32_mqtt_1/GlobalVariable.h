@@ -14,3 +14,5 @@ int sleeps = 0; // Pulse
 float minTemps = 0.00f;
 float maxTemps = 0.00f;
 float avgTemps = 0.00f;
+
+int ledlogo = 0;

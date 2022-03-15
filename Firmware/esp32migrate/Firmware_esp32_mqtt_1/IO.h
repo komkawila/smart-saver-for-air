@@ -5,6 +5,7 @@
 #define RELAY_PIN 32 // Active High 6
 #define LED_GREEN_PIN 33 // Active Low 5
 #define LED_YELLOW_PIN 25 // Active Low 8
+#define LED_LOGO_PIN 4 // 
 
 struct IO {
   byte pins;

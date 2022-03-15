@@ -21,6 +21,7 @@ IO buzzer = {BUZZER_PIN, HIGH}; // Active High
 IO relay = {RELAY_PIN, HIGH}; // Active High
 IO green = {LED_GREEN_PIN, LOW}; // Active Low
 IO yellow = {LED_YELLOW_PIN, LOW}; // Active Low
+IO logo = {LED_LOGO_PIN, LOW}; // Active Low
 
 Timer timeCountTimer;
 Timer temperatureTimer;

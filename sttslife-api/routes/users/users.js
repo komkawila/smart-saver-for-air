@@ -180,4 +180,65 @@ route.delete('/:user_id', async (req, res, next) => {
     });
 });
 
+
+route.put('/nightmode/:user_id', async (req, res, next) => {
+    const user_id = req.params.user_id;
+    const nightmode = req.body.nightmode;
+
+    console.log("UPDATE nightmode = " + nightmode + "user : " + user_id);
+    await db.query("UPDATE user_tb SET nightmode = ?\
+        WHERE user_id =?",
+        [nightmode, user_id],
+        function (err, result, fields) {
+            if (err) {
+                console.log(err);
+                res.send({ err: true, status: false, message: err });
+            } else {
+                const json = { err: false, status: (result.length == 0 ? false : true), message: result };
+                res.send(json);
+            }
+        });
+
+});
+
+route.put('/sleepmode/:user_id', async (req, res, next) => {
+    const user_id = req.params.user_id;
+    const sleepmode = req.body.sleepmode;
+
+    console.log("UPDATE sleepmode = " + sleepmode + "user : " + user_id);
+    await db.query("UPDATE user_tb SET sleepmode = ?\
+        WHERE user_id =?",
+        [sleepmode, user_id],
+        function (err, result, fields) {
+            if (err) {
+                console.log(err);
+                res.send({ err: true, status: false, message: err });
+            } else {
+                const json = { err: false, status: (result.length == 0 ? false : true), message: result };
+                res.send(json);
+            }
+        });
+
+});
+
+route.put('/logo/:user_id', async (req, res, next) => {
+    const user_id = req.params.user_id;
+    const logo = req.body.logo;
+
+    console.log("UPDATE logo = " + logo + "user : " + user_id);
+    await db.query("UPDATE user_tb SET logo = ?\
+        WHERE user_id =?",
+        [logo, user_id],
+        function (err, result, fields) {
+            if (err) {
+                console.log(err);
+                res.send({ err: true, status: false, message: err });
+            } else {
+                const json = { err: false, status: (result.length == 0 ? false : true), message: result };
+                res.send(json);
+            }
+        });
+
+});
+
 module.exports = route;
