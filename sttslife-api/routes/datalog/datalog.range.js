@@ -3,7 +3,7 @@ const db = require("../../util/db.config");
 // const db = require('../util/db.config');
 const route = express.Router();
 
-route.get("/date/:user_id", async (req, res, next) => {
+route.post("/date/:user_id", async (req, res, next) => {
   const user_id = req.params.user_id;
   const startdate = req.body.startdate;
   const enddate = req.body.enddate;
@@ -30,7 +30,7 @@ route.get("/date/:user_id", async (req, res, next) => {
   );
 });
 
-route.get("/datetimes/:user_id", async (req, res, next) => {
+route.post("/datetimes/:user_id", async (req, res, next) => {
   const user_id = req.params.user_id;
   const startdatetimes = req.body.startdatetimes;
   const enddatetimes = req.body.enddatetimes;

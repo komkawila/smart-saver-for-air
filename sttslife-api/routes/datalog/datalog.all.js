@@ -3,7 +3,7 @@ const db = require("../../util/db.config");
 // const db = require('../util/db.config');
 const route = express.Router();
 
-route.get("/:user_id", async (req, res, next) => {
+route.post("/:user_id", async (req, res, next) => {
   console.log("GET Air Brand");
   const user_id = req.params.user_id;
   await db.query(

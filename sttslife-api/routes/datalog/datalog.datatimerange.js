@@ -3,7 +3,7 @@ const db = require("../../util/db.config");
 // const db = require('../util/db.config');
 const route = express.Router();
 
-route.get("/date/:user_id", async (req, res, next) => {
+route.post("/date/:user_id", async (req, res, next) => {
   const user_id = req.params.user_id;
   db.query(
     "SELECT DATE(datalog_time) as date FROM datalog_tb where user_id = ? group by DATE(datalog_time)",
@@ -33,7 +33,7 @@ route.get("/date/:user_id", async (req, res, next) => {
   );
 });
 
-route.get("/time/:user_id/:date", async (req, res, next) => {
+route.post("/time/:user_id/:date", async (req, res, next) => {
   const user_id = req.params.user_id;
   const date = req.params.date;
   db.query(
