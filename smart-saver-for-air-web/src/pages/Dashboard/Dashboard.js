@@ -1010,13 +1010,13 @@ function Dartboard() {
                   />
                 </div>
                 <br />
-                <div class="input-group input-group-sm mb-1">
+                <div class="input-group input-group-sm mb-2">
                   <div class="input-group-prepend" style={{ marginRight: 20 }}>
                     <span class="input-group-text" id="inputGroup-sizing-sm">
-                      ปิด-เปิดไฟ LOGO
+                      NIGHT MODE
                     </span>
                   </div>
-                  <Switch onChange={handleChangeLogo} checked={checkedlogo} />
+                  <Switch onChange={handleChangeNight} checked={checkednight} />
                 </div>
                 <div class="input-group input-group-sm mb-2">
                   <div class="input-group-prepend" style={{ marginRight: 20 }}>
@@ -1026,13 +1026,13 @@ function Dartboard() {
                   </div>
                   <Switch onChange={handleChangeSleep} checked={checkedsleep} />
                 </div>
-                <div class="input-group input-group-sm mb-2">
+                <div class="input-group input-group-sm mb-1">
                   <div class="input-group-prepend" style={{ marginRight: 20 }}>
                     <span class="input-group-text" id="inputGroup-sizing-sm">
-                      NIGHT MODE
+                      ปิด-เปิดไฟ LOGO
                     </span>
                   </div>
-                  <Switch onChange={handleChangeNight} checked={checkednight} />
+                  <Switch onChange={handleChangeLogo} checked={checkedlogo} />
                 </div>
 
                 <button
