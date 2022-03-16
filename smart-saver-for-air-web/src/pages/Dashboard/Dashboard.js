@@ -200,6 +200,10 @@ function Dartboard() {
   // console.log(history.location.state.id);
   // console.log(labelstemp);
   const [checked, setchecked] = useState(false);
+  const [checkedsleep, setcheckedsleep] = useState(false);
+  const [checkednight, setcheckednight] = useState(false);
+  const [checkedlogo, setcheckedlogo] = useState(false);
+
   const [datas, setcDatas] = useState([]);
   const [config_id, setConfig_id] = useState([]);
   const [users, setUsers] = useState([]);
@@ -215,6 +219,41 @@ function Dartboard() {
       }
     );
   };
+
+  const handleChangeSleep = () => {
+    setcheckedsleep(!checkedsleep);
+    sendMessage("AT+SLEEP=" + (!checkedsleep ? 1 : 0));
+    axios.put(
+      "https://sttslife-api.sttslife.co/users/sleepmode/" +
+        history.location.state.id,
+      {
+        sleepmode: !checkedsleep ? 1 : 0,
+      }
+    );
+  };
+  const handleChangeNight = () => {
+    setcheckednight(!checkednight);
+    sendMessage("AT+NIGHT=" + (!checkednight ? 1 : 0));
+    axios.put(
+      "https://sttslife-api.sttslife.co/users/nightmode/" +
+        history.location.state.id,
+      {
+        nightmode: !checkednight ? 1 : 0,
+      }
+    );
+  };
+  const handleChangeLogo = () => {
+    setcheckedlogo(!checkedlogo);
+    sendMessage("AT+LOGO=" + (!checkedlogo ? 1 : 0));
+    axios.put(
+      "https://sttslife-api.sttslife.co/users/logo/" +
+        history.location.state.id,
+      {
+        logo: !checkedlogo ? 1 : 0,
+      }
+    );
+  };
+
   const { messages, sendMessage } = useChat(history.location.state.id);
 
   const [pulses, setPulse] = useState(0);
@@ -248,6 +287,9 @@ function Dartboard() {
             setConfig_id(res.data.message[0]);
           });
         setchecked(res.data.message[0].user_enable === 0 ? false : true);
+        setcheckedsleep(res.data.message[0].sleepmode === 0 ? false : true);
+        setcheckednight(res.data.message[0].nightmode === 0 ? false : true);
+        setcheckedlogo(res.data.message[0].logo === 0 ? false : true);
         setUsers(res.data);
         setPulse(res.data.message[0].user_pulseset);
         // setPulse
@@ -280,6 +322,51 @@ function Dartboard() {
               user_enable: status,
             }
           );
+        } else if (body.indexOf("AT+LOGO=") !== -1) {
+          const status =
+            parseInt(body.substring(body.indexOf("=") + 1, body.length)) === 0
+              ? false
+              : true;
+          setcheckedlogo(status);
+          console.log("AT+LOGO = #");
+          console.log(status);
+          axios.put(
+            "https://sttslife-api.sttslife.co/users/logo/" +
+              history.location.state.id,
+            {
+              logo: status,
+            }
+          );
+        } else if (body.indexOf("AT+SLEEP=") !== -1) {
+          const status =
+            parseInt(body.substring(body.indexOf("=") + 1, body.length)) === 0
+              ? false
+              : true;
+          setcheckedsleep(status);
+          console.log("AT+SLEEP = #");
+          console.log(status);
+          axios.put(
+            "https://sttslife-api.sttslife.co/users/sleepmode/" +
+              history.location.state.id,
+            {
+              sleepmode: status,
+            }
+          );
+        } else if (body.indexOf("AT+NIGHT=") !== -1) {
+          const status =
+            parseInt(body.substring(body.indexOf("=") + 1, body.length)) === 0
+              ? false
+              : true;
+          setcheckednight(status);
+          console.log("AT+NIGHT = #");
+          console.log(status);
+          axios.put(
+            "https://sttslife-api.sttslife.co/users/nightmode/" +
+              history.location.state.id,
+            {
+              nightmode: status,
+            }
+          );
         } else if (body.indexOf("AT+MODE=") !== -1) {
           const config_id = parseInt(
             body.substring(body.indexOf("=") + 1, body.length)
@@ -293,33 +380,6 @@ function Dartboard() {
             }
           );
           fetchAPI();
-          // setUsers({
-          //   err: users.err,
-          //   status: users.status,
-          //   message: [
-          //     {
-          //       user_id: users.message[0].user_id,
-          //       user_enable: users.message[0].user_enable,
-          //       user_username: users.message[0].user_username,
-          //       user_password: users.message[0].user_password,
-          //       user_detail: users.message[0].user_detail,
-          //       user_localtion: users.message[0].user_localtion,
-          //       user_type: users.message[0].user_type,
-          //       air_species: users.message[0].air_species,
-          //       user_purchaseorder: users.message[0].user_purchaseorder,
-          //       user_tel: users.message[0].user_tel,
-          //       user_updatetimes: users.message[0].user_updatetimes,
-          //       user_createtimes: users.message[0].user_createtimes,
-          //       air_brand: users.message[0].air_brand,
-          //       air_btu: users.message[0].air_btu,
-          //       air_type: users.message[0].air_type,
-          //       air_lifetime: users.message[0].air_lifetime,
-          //       user_startwaranty: users.message[0].user_startwaranty,
-          //       user_endwaranty: users.message[0].user_endwaranty,
-          //       user_modes: config_id,
-          //     }
-          //   ]
-          // });
         } else if (body.indexOf("AT+PULSE=") !== -1) {
           const user_pulseset = parseInt(
             body.substring(body.indexOf("=") + 1, body.length)
@@ -950,14 +1010,13 @@ function Dartboard() {
                   />
                 </div>
                 <br />
-
                 <div class="input-group input-group-sm mb-1">
                   <div class="input-group-prepend" style={{ marginRight: 20 }}>
                     <span class="input-group-text" id="inputGroup-sizing-sm">
                       ปิด-เปิดไฟ LOGO
                     </span>
                   </div>
-                  <Switch onChange={handleChange} checked={checked} />
+                  <Switch onChange={handleChangeLogo} checked={checkedlogo} />
                 </div>
                 <div class="input-group input-group-sm mb-2">
                   <div class="input-group-prepend" style={{ marginRight: 20 }}>
@@ -965,7 +1024,7 @@ function Dartboard() {
                       SLEEP MODE
                     </span>
                   </div>
-                  <Switch onChange={handleChange} checked={checked} />
+                  <Switch onChange={handleChangeSleep} checked={checkedsleep} />
                 </div>
                 <div class="input-group input-group-sm mb-2">
                   <div class="input-group-prepend" style={{ marginRight: 20 }}>
@@ -973,7 +1032,7 @@ function Dartboard() {
                       NIGHT MODE
                     </span>
                   </div>
-                  <Switch onChange={handleChange} checked={checked} />
+                  <Switch onChange={handleChangeNight} checked={checkednight} />
                 </div>
 
                 <button

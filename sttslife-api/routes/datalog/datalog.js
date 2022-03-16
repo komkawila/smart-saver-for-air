@@ -13,4 +13,7 @@ route.use('/range', rangeRoute);
 const dateRoute = require('./datalog.date');
 route.use('/date', dateRoute);
 
+const hwRoute = require('./datalog.hw');
+route.use('/hw', hwRoute);
+
 module.exports = route;

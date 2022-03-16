@@ -197,10 +197,13 @@ void readTemps() {
       relay.off(); // On Relay
       green.off(); // On LED Green
       yellow.off(); // On LED Yellow
+      _sleep = true;
     } else {
       sleeps++;
+      _sleep = false;
     }
   } else {
+    _sleep = false;
     sleeps = 0;
     startFunc();
   }
@@ -312,8 +315,16 @@ void startFunc() {
 }
 bool _green = false;
 void ledStatus() {
-  _green = !_green;
-  (_green) ? green.on() : green.off();
+  if (_sleep) {
+    relay.off(); // On Relay
+    green.off(); // On LED Green
+    yellow.off(); // On LED Yellow
+
+  } else {
+    _green = !_green;
+    (_green) ? green.on() : green.off();
+  }
+
 }
 
 
@@ -328,6 +339,10 @@ void publishMQTT() {
     ledgreen = false;
     ledyellow = false;
     ledred = false;
+    relay.off(); // On Relay
+    green.off(); // On LED Green
+    buzzer.off(); // Off Buzzer
+    yellow.off(); // On LED Yellow
   }
   else {
     ledgreen = !ledgreen;
@@ -426,7 +441,7 @@ void fetchAPI() {
     user_enable = doc["user_enable"];
     Pulse_Setting = doc["user_pulseset"];
     ledlogo = doc["logo"];
-    ledlogo == 0 ? logo.on() : logo.off();
+    ledlogo == 0 ? logo.off() : logo.on();
     js = getHttp("http://dns.sttslife.co:3123/devices/config/" +  String(user_modes));
     json = js.substring(js.indexOf("[") + 1, js.indexOf("]"));
 
@@ -446,6 +461,7 @@ void fetchAPI() {
     config_time3 = doc2["config_time3"];
     config_sleep = doc2["config_sleep"];
     config_pulsecount = doc2["config_pulsecount"];
+    CountSleep_Setting = doc2["config_sleep"];
 
     // SET VARIABLE
     Slope_Setting = config_slope;     // Slope Setting
@@ -513,16 +529,17 @@ void setup() {
   yellow.begin(); // Init LED Yellow
   logo.begin(); // Init LED Logo
   buzzer.on(); // On Buzzer
-  temperatureTimer.setIntervals(2000);
-  ledgreenTimer.setIntervals(1000);
-  timeCountTimer.setIntervals(2000);
-  mqttTimer.setIntervals(2000);
-  delay(500);
   relay.off(); // On Relay
   green.off(); // On LED Green
   buzzer.off(); // Off Buzzer
   yellow.off(); // On LED Yellow
   fetchAPI();
+  temperatureTimer.setIntervals(2000);
+  ledgreenTimer.setIntervals(1000);
+  timeCountTimer.setIntervals(2000);
+  mqttTimer.setIntervals(2000);
+  delay(500);
+  //  while (1);
 }
 String AT_COMMAND = "";
 

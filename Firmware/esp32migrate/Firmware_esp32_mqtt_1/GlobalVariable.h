@@ -16,3 +16,5 @@ float maxTemps = 0.00f;
 float avgTemps = 0.00f;
 
 int ledlogo = 0;
+
+bool _sleep = false; // // สถานะ sleep mode

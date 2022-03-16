@@ -238,7 +238,6 @@ route.put('/logo/:user_id', async (req, res, next) => {
                 res.send(json);
             }
         });
-
 });
 
 module.exports = route;
