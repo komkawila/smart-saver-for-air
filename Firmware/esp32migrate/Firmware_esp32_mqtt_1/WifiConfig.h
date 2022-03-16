@@ -11,8 +11,13 @@ String topic = "1";
 String user_username = "user11";
 String clientName = "sttslife-" + user_username;
 
+const char* ntpServer = "pool.ntp.org";
+const long  gmtOffset_sec = 25200;
+const int   daylightOffset_sec = 3600;
 
 String user_password;
+
+int user_id = 0;
 int user_modes = 0;
 int user_enable = 0;
 float config_slope;

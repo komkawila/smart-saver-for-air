@@ -192,21 +192,25 @@ void readTemps() {
 
   slope = temperature - old_temp;
   old_temp = temperature;
-  if (temperature >= SleepTemps) {
-    if (sleeps >= CountSleep_Setting) {
-      relay.off(); // On Relay
-      green.off(); // On LED Green
-      yellow.off(); // On LED Yellow
-      _sleep = true;
+
+  if (user_enable == 1) {
+    if (temperature >= SleepTemps) {
+      if (sleeps >= CountSleep_Setting) {
+        relay.off(); // On Relay
+        green.off(); // On LED Green
+        yellow.off(); // On LED Yellow
+        _sleep = true;
+      } else {
+        sleeps++;
+        _sleep = false;
+      }
     } else {
-      sleeps++;
       _sleep = false;
+      sleeps = 0;
+      startFunc();
     }
-  } else {
-    _sleep = false;
-    sleeps = 0;
-    startFunc();
   }
+
 
   Serial.print("temperature is: ");
   Serial.print(temperature);
@@ -262,6 +266,7 @@ void startFunc() {
     yellow.off();
     if (relay.getStatus() == 0) {
       countred++;
+      countnew++;
     }
     relay.on();
   }
@@ -304,6 +309,7 @@ void startFunc() {
         yellow.off();
         if (relay.getStatus() == 0) {
           countred++;
+          countnew++;
         }
         relay.on();
         countRelay = 0;
@@ -313,23 +319,19 @@ void startFunc() {
     }
   }
 }
+
 bool _green = false;
 void ledStatus() {
   if (_sleep) {
     relay.off(); // On Relay
     green.off(); // On LED Green
     yellow.off(); // On LED Yellow
-
   } else {
     _green = !_green;
     (_green) ? green.on() : green.off();
   }
-
 }
 
-
-
-//
 int mode_id = 0;
 bool enable = true;
 void publishMQTT() {
@@ -353,6 +355,7 @@ void publishMQTT() {
   }
   //  if (countred >= 100) countred = 73;
   //  if (countyellow >= 100) countyellow = 11;
+
   String json = "{";
   json += "\"user_id\": \"" + String(topic) + "\",";
   json += "\"ledr\": \"" + String(relay.getStatus()) + "\",";
@@ -437,6 +440,7 @@ void fetchAPI() {
 
     const char* datas = doc["user_username"]; user_username = datas;
     datas = doc["user_password"]; user_password = datas;
+    user_id = doc["user_id"];
     user_modes = doc["user_modes"];
     user_enable = doc["user_enable"];
     Pulse_Setting = doc["user_pulseset"];
@@ -539,6 +543,7 @@ void setup() {
   timeCountTimer.setIntervals(2000);
   mqttTimer.setIntervals(2000);
   delay(500);
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   //  while (1);
 }
 String AT_COMMAND = "";
@@ -547,8 +552,24 @@ String AT_COMMAND = "";
   AT+SHOW#
   AT+TIME=XX#
 */
-
+unsigned long postNTP = millis();
 void loop(void) {
+  if (millis() - postNTP >= 1000) {
+    struct tm timeinfo;
+    if (!getLocalTime(&timeinfo)) {
+      Serial.println("Failed to obtain time");
+      return;
+    }
+    int hr = timeinfo.tm_hour;
+    int mn = timeinfo.tm_min;
+    int sc = timeinfo.tm_sec;
+    if (mn == 0 && (sc == 0 || sc == 1)) {
+
+      getHttp("http://dns.sttslife.co:3123/datalog/hw/log/" + String(user_id) + "/" + String(countnew) + "/" + String(temperature, 2));
+      countnew = 0;
+    }
+    postNTP = millis();
+  }
   if (millis() - post_detectCommand >= 100 && _detectCommand) {
     buzzer.off();
     _detectCommand = false;
@@ -571,8 +592,8 @@ void loop(void) {
   }
   //  Pulse_Setting = map(analogRead(VOLUME_PIN), 0, 1023, 0, PulseMax_Setting);
 
+  temperatureTimer.run(readTemps);
   if (user_enable == 1) {
-    temperatureTimer.run(readTemps);
     ledgreenTimer.run(ledStatus);
     timeCountTimer.run(timeCountPrograms);
   } else {

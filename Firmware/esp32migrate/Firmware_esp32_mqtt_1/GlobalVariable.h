@@ -18,3 +18,4 @@ float avgTemps = 0.00f;
 int ledlogo = 0;
 
 bool _sleep = false; // // สถานะ sleep mode
+int countnew = 0;
