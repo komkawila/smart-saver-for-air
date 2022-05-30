@@ -1,6 +1,6 @@
 #define VOLUME_PIN 34 // A0
 
-#define BUZZER_PIN 27 // 7
+#define BUZZER_PIN 27 // 27
 
 #define RELAY_PIN 32 // Active High 6
 #define LED_GREEN_PIN 33 // Active Low 5

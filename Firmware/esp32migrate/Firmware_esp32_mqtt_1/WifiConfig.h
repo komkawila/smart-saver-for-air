@@ -1,19 +1,26 @@
 
-//const char* ssid = "komkawila_2.4GHz";
+//const char* ssid = "lockerwifi";
+//const char* password =  "tpp@ssw0rd";
+const char* ssid = "stt2gwifi";
+const char* password =  "025113423";
+//const char* ssid = "stt2gwifi-xiaomi";
+//const char* password =  "025113423";
+//const char* ssid = "komkawila";
 //const char* password =  "12345678";
-const char* ssid = "lockerwifi";
-const char* password =  "tpp@ssw0rd";
 const char* mqttServer = "dns.sttslife.co";
 const int mqttPort = 1883;
 const char* mqttUser = "root";
 const char* mqttPassword = "P@ssw0rd";
 String topic = "1";
 String user_username = "user11";
-String clientName = "sttslife-" + user_username;
+//String clientName = "sttslife-" + user_username;
+//String clientName = "sttslife-";
+String clientName = "";
 
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 25200;
 const int   daylightOffset_sec = 3600;
+
 
 String user_password;
 

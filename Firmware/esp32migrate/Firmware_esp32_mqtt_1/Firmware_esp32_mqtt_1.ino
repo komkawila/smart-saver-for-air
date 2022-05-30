@@ -20,6 +20,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   //  user_enable
   _detectCommand = true;
   buzzer.on();
+  delay(100);
   post_detectCommand = millis();
 
   if (mess.indexOf("AT+") != -1) {
@@ -194,21 +195,25 @@ void readTemps() {
   old_temp = temperature;
 
   if (user_enable == 1) {
-    if (temperature >= SleepTemps) {
-      if (sleeps >= CountSleep_Setting) {
-        relay.off(); // On Relay
-        green.off(); // On LED Green
-        yellow.off(); // On LED Yellow
-        _sleep = true;
+
+    if (times >= TimeNo2_Setting) {
+      if (temperature >= SleepTemps) {
+        if (sleeps >= CountSleep_Setting) {
+          relay.off(); // On Relay
+          green.off(); // On LED Green
+          yellow.off(); // On LED Yellow
+          _sleep = true;
+        } else {
+          sleeps++;
+          _sleep = false;
+        }
       } else {
-        sleeps++;
         _sleep = false;
+        sleeps = 0;
+        startFunc();
       }
-    } else {
-      _sleep = false;
-      sleeps = 0;
-      startFunc();
     }
+
   }
 
 
@@ -283,7 +288,8 @@ void startFunc() {
     if (slope >= 0.20 && pulse > 0)
       pulse = 0;
 
-    if (slope == 0.0 && times > TimeNo3_Setting) {
+    //    if (slope == 0.0 && times > TimeNo3_Setting) { // ------------ เดิม
+    if (times > TimeNo3_Setting) { // ------------ เดิม
       times = TimeNo1_Setting;
       pulse = 0; // Pulse
       //      sleeps = 0; // Sleep
@@ -359,7 +365,7 @@ void publishMQTT() {
   String json = "{";
   json += "\"user_id\": \"" + String(topic) + "\",";
   json += "\"ledr\": \"" + String(relay.getStatus()) + "\",";
-  json += "\"ledy\": \"" + String(!yellow.getStatus()) + "\",";
+  json += "\"ledy\": \"" + String(yellow.getStatus()) + "\",";
   json += "\"ledg\": \"" + String(ledgreen) + "\",";
   json += "\"countred\": \"" + String(countred) + "\",";
   json += "\"countyellow\": \"" + String(countyellow) + "\",";
@@ -496,20 +502,63 @@ void fetchAPI() {
 }
 
 void setup() {
+  buzzer.begin(); // Init Buzzer
+  relay.begin(); // Init Relay
+  green.begin(); // Init LED Green
+  yellow.begin(); // Init LED Yellow
+  logo.begin(); // Init LED Logo
   //  pinMode(LED_BUILTIN, OUTPUT);
   //  digitalWrite(LED_BUILTIN, LOW);
   Serial.begin(115200);
   String macaddress = WiFi.macAddress();
-  macaddress = macaddress.substring(0, macaddress.indexOf(":") + 6);
-  clientName += "-" + macaddress;
-  Serial.println(clientName);
+  macaddress = macaddress.substring(0, macaddress.indexOf(":") );
+  clientName = macaddress + user_username;
+  //  Serial.println(clientName);
+  //  WiFi.mode(WIFI_STA);
+  WiFi.mode(WIFI_STA);
+
+  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
   WiFi.setHostname(clientName.c_str());
   WiFi.begin(ssid, password);
-
+  Serial.printf("WiFi connecting to %s\n",  ssid);
+  uint32_t notConnectedCounter = 0;
   while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi..");
+    Serial.print(".");
+    delay(500);
+    notConnectedCounter++;
+    if (notConnectedCounter > 20) {
+      ESP.restart();
+      Serial.println("ESP RESTART");
+    }
   }
+  Serial.printf("\nWiFi connected\nIP : ");
+  Serial.println(WiFi.localIP());
+
+  //  WiFi.begin(ssid, password);
+  //  Serial.print("Connecting to WiFi ..");
+  //  Serial.println(ssid);
+  //  Serial.println(password);
+  //  Serial.println();
+  //  while (WiFi.status() != WL_CONNECTED) {
+  //    Serial.print('.');
+  //    delay(1000);
+  //  }
+  //  Serial.println(WiFi.localIP());
+
+  // Wait for wifi to be connected
+  //    uint32_t notConnectedCounter = 0;
+  //    while (WiFi.status() != WL_CONNECTED) {
+  //      WiFi.reconnect();
+  //        delay(500);
+  //        Serial.println("Wifi connecting...");
+  //        notConnectedCounter++;
+  //        if(notConnectedCounter > 10) { // Reset board if not connected after 5s
+  //            Serial.println("Resetting due to Wifi not connecting...");
+  //            ESP.restart();
+  //        }
+  //    }
+  //  Serial.print("Wifi connected, IP address: ");
+  //  Serial.println(WiFi.localIP());
 
   Serial.println("Connected to the WiFi network");
   client.setServer(mqttServer, mqttPort);
@@ -527,16 +576,14 @@ void setup() {
 
   ds18b20.begin();
 
-  buzzer.begin(); // Init Buzzer
-  relay.begin(); // Init Relay
-  green.begin(); // Init LED Green
-  yellow.begin(); // Init LED Yellow
-  logo.begin(); // Init LED Logo
-  buzzer.on(); // On Buzzer
+
   relay.off(); // On Relay
   green.off(); // On LED Green
   buzzer.off(); // Off Buzzer
   yellow.off(); // On LED Yellow
+  buzzer.on(); // On Buzzer
+  delay(1000);
+  buzzer.off(); // On Buzzer
   fetchAPI();
   temperatureTimer.setIntervals(2000);
   ledgreenTimer.setIntervals(1000);

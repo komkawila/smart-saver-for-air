@@ -3,9 +3,6 @@ float tempOffset = 0.00;
 #define maxcalTemp 20 // Max Array
 #define maxAVGTemp 200 // Max AVG Array
 
-
-
-
 float Slope_Setting = 0.04;     // Slope Setting
 // not use
 float temp_cutoff = 30; // Temp Cutoff
